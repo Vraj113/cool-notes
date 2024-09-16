@@ -2,8 +2,18 @@
 import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [notes, setnotes] = useState([]);
+  const [notes, setNotes] = useState(null);
   const [data, setData] = useState({ title: "", content: "" });
+
+  const onChange = async (e) => {
+    e.preventDefault();
+    if (e.target.name === "title") {
+      setData({ ...data, title: e.target.value });
+    }
+    if (e.target.name === "content") {
+      setData({ ...data, content: e.target.value });
+    }
+  };
 
   const getNotes = async () => {
     const response = await fetch("/api/notes", {
@@ -16,48 +26,58 @@ export default function Home() {
 
     const notes = await response.json();
     console.log(notes);
-    setnotes(notes);
+    setNotes(notes);
   };
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    // if (data.title == "" || data.content === "") {
-    //   return;
-    // }
     const res = await fetch("/api/notes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        title: "First ntoe",
-        content: "Heyy",
-      }),
+      body: JSON.stringify(data),
     });
     let response = await res.json();
     console.log(response);
-    // setData({ title: "", content: "" });
     getNotes();
   };
+
   useEffect(() => {
     getNotes();
   }, []);
+
   return (
     <>
-      {" "}
-      {/* {session ? <h1>Hello {session.user?.name}</h1> : <h1>Hello Guest</h1>} */}
-      <div>Login</div>
-      <div>
-        <input type="text" />
+      <div>Notes</div>
+      <div className="w-[80vw] m-auto">
+        <div className="border-2">
+          <input
+            className="w-full"
+            type="text"
+            placeholder="Your Title"
+            name="title"
+            value={data.title}
+            onChange={onChange}
+          />
+        </div>
+        <div className="border-2">
+          <textarea
+            className="w-full"
+            placeholder="Today's Note"
+            name="content"
+            value={data.content}
+            onChange={onChange}
+          />
+        </div>
+        <div>
+          <button onClick={onSubmit}>Submit</button>
+        </div>
       </div>
-      <div>
-        <input type="text" />
-      </div>
-      <div>
-        <input type="text" />
-      </div>
-      <div>
-        <button onClick={onSubmit}>Submit</button>
-      </div>
+      {notes &&
+        notes.notes.map((note) => {
+          return <div key={note.id}>{note.title}</div>;
+        })}
     </>
   );
 }

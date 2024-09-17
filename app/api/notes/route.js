@@ -42,3 +42,16 @@ export async function POST(req) {
 
   return NextResponse.json({ message: "Note Saved successfully" });
 }
+
+export const DELETE = async (request) => {
+  const session = await getServerSession(authOptions);
+  const body = await request.json();
+  if (!session) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+  await connectDb();
+  // Find notes by email (adjust if needed)
+  console.log(body);
+  let notes = await Note.findOneAndDelete({ _id: body.id });
+  return NextResponse.json({ notes });
+};

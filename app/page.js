@@ -9,6 +9,8 @@ export default function Home() {
     mood: "🙂",
     theme: "white",
   });
+  const [deleteBox, setDeleteBox] = useState(false); // State to control delete popup
+  const [noteIdToDelete, setNoteIdToDelete] = useState(null); // Store the ID of the note to delete
 
   const onChange = async (e) => {
     e.preventDefault();
@@ -56,7 +58,23 @@ export default function Home() {
     getNotes();
     setData({ ...data, title: "", content: "" });
   };
-
+  const handleDelete = async (id) => {
+    const res = await fetch("/api/notes", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
+    getNotes();
+  };
+  const showPopUp = (id) => {
+    setNoteIdToDelete(id); // Store the note's ID
+    setDeleteBox(true); // Show the delete popup
+  };
+  const confirmDelete = () => {
+    handleDelete(noteIdToDelete); // Call the delete function with the stored ID
+  };
   useEffect(() => {
     getNotes();
   }, []);
@@ -73,7 +91,26 @@ export default function Home() {
   return (
     <>
       <Navbar />
-
+      {deleteBox && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+            <p className="mb-4">Are you sure you want to delete this note?</p>
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+              onClick={confirmDelete}
+            >
+              Delete
+            </button>
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
+              onClick={() => setDeleteBox(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
       <img
         className="h-36  w-auto rotate-45 absolute top-40 right-10 -z-10"
         src="./bunny.png"
@@ -264,8 +301,17 @@ export default function Home() {
                 }`}
                 key={note.id}
               >
-                <div className="font-bold text-pink-700 bg-blue-50 text-lg rounded w-fit px-1">
-                  {formatDate(note.postedOn)}
+                <div className="flex justify-between">
+                  <div className="font-bold text-pink-700 bg-blue-50 text-lg rounded w-fit px-1">
+                    {formatDate(note.postedOn)}
+                  </div>
+                  <div>
+                    <img
+                      className="w-6 h-6"
+                      src="/delete.png"
+                      onClick={() => showPopUp(note._id)}
+                    />
+                  </div>
                 </div>
 
                 <div className="font-semibold  inline text-3xl">

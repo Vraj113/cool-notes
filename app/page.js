@@ -104,16 +104,16 @@ export default function Home() {
           src="./penguin.png"
         />
         <img
-          className="md:hidden h-36  w-auto   absolute -top-12 -left-[6%] -z-10"
+          className="md:hidden h-36  w-auto -rotate-90  absolute top-[40%] -left-[12%] -z-10"
           src="./penguin.png"
         />
 
         <img
-          className="md:hidden h-20  w-auto   absolute -top-8  left-[20%] -z-10"
+          className="md:hidden h-20  w-auto   absolute -top-8  left-[10%] -z-10"
           src="./bunny.png"
         />
         <img
-          className="md:hidden h-20  w-auto   absolute -top-6 left-[70%] -z-10"
+          className="md:hidden h-20  w-auto   absolute -top-4 left-[70%] -z-10"
           src="./chick.png"
         />
         <div className="my-2 flex items-center ">

@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export async function middleware(request) {
   const cookieStore = cookies();
   const token = cookieStore.get("next-auth.session-token")?.value;
-
   const { pathname } = request.nextUrl;
 
   // Allow access to the login page without a token
@@ -16,8 +15,8 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  // For other protected routes, redirect to login if not authenticated
-  if (!token) {
+  // Redirect to login if not authenticated for other protected routes
+  if (!token && pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

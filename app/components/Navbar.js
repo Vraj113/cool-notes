@@ -2,11 +2,13 @@
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
 
   const [quote, setQuote] = useState({ text: "", author: "" });
+  const router = useRouter();
   const getMyQuote = async () => {
     const response = await fetch("/api/quotes", {
       method: "GET",
@@ -16,6 +18,7 @@ const Navbar = () => {
   };
   const handleSignOut = async () => {
     await signOut({ redirect: false }); // This prevents the default redirect behavior
+    router.push("login");
   };
   useEffect(() => {
     getMyQuote();

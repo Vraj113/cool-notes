@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playpen+Sans:wght@100..800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,27 +18,43 @@
 .glitter {
   animation: glitter 1.5s infinite;
 }
+.playpen-sans-v {
+  font-family: "Playpen Sans", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.great-vibes-regular {
+  font-family: "Great Vibes", cursive;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 1.5rem; /* Adjust size to your preference */
+  line-height: 1.2; /* Customize line height */
+  letter-spacing: 1px; /* Adjust letter spacing */
+}
+
 /* 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
   }
-} */
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  @layer utilities {
+    .text-balance {
+      text-wrap: balance;
+    }
+  } */

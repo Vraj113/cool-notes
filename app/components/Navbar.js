@@ -28,10 +28,12 @@ const Navbar = () => {
       <div className="flex justify-around text-bold items-center font-semibold text-lg   md:w-[90vw] m-auto px-4">
         {quote.text && (
           <div className="relative  hidden md:block   bg-gradient-to-r  rounded-lg  text-center overflow-hidden w-[60vw] max-w-[80%]">
-            <p className="text-xl font-semibold text-gray-800 glitter">
+            <p className="text-xl font-semibold text-gray-800  great-vibes-regular">
               ✨{quote.text}✨
             </p>
-            <footer className="mt-2  text-sm">- {quote.author}</footer>
+            <footer className="mt-2  text-sm great-vibes-regular">
+              - {quote.author}
+            </footer>
           </div>
         )}
         <div className="flex justify-around items-center w-full md:w-80 md:block ">

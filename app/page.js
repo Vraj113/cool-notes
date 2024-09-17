@@ -118,7 +118,7 @@ export default function Home() {
         />
         <div className="my-2 flex items-center ">
           <input
-            className="w-[80%] outline-pink-300 p-2 placeholder-black bg-pink-100 text-lg md:text-xl"
+            className="w-[80%] outline-pink-300 p-2 placeholder-black bg-pink-100 text-lg md:text-xl  playpen-sans-v "
             type="text"
             placeholder="Your Title"
             name="title"
@@ -226,7 +226,7 @@ export default function Home() {
         </div>
         <div className="my-2 ">
           <textarea
-            className="w-full outline-pink-300 p-2 placeholder-black h-[300px] bg-pink-100 text-lg md:text-xl"
+            className="w-full outline-pink-300 p-2 placeholder-black h-[300px] bg-pink-100 text-lg md:text-xl  playpen-sans-v "
             placeholder="Today's Note"
             name="content"
             value={data.content}

@@ -54,7 +54,7 @@ export default function Home() {
     });
     let response = await res.json();
     getNotes();
-    setData({ title: "", content: "", mood: "🙂" });
+    setData({ ...data, title: "", content: "" });
   };
 
   useEffect(() => {

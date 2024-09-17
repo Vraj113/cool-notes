@@ -1,6 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@keyframes glitter {
+  0% {
+    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 15px #ff0;
+  }
+  50% {
+    text-shadow: 0 0 5px #ff0, 0 0 20px #ff0, 0 0 30px #ff0;
+  }
+  100% {
+    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 15px #ff0;
+  }
+}
+
+.glitter {
+  animation: glitter 1.5s infinite;
+}
 /* 
 :root {
   --background: #ffffff;

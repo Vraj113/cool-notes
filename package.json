@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "inspirational-quotes": "^2.0.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.2",
     "next": "14.2.11",
     "next-auth": "^4.24.7",
+    "quote-generator": "^0.1.3",
     "react": "^18",
     "react-dom": "^18"
   },

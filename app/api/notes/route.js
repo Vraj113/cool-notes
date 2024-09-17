@@ -7,13 +7,15 @@ import Note from "@/app/models/Note";
 // GET request handler
 export const GET = async () => {
   const session = await getServerSession(authOptions);
-  console.log(session);
+
   if (!session) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
-
+  await connectDb();
   // Find notes by email (adjust if needed)
-  let notes = await Note.find({ postedBy: session.user?.email });
+  let notes = await Note.find({ postedBy: session.user?.email }).sort({
+    postedOn: -1,
+  });
   return NextResponse.json({ notes });
 };
 
@@ -31,6 +33,8 @@ export async function POST(req) {
   const newNote = new Note({
     title: body.title,
     content: body.content,
+    mood: body.mood,
+    theme: body.theme,
     postedBy: session.user?.email,
   });
 

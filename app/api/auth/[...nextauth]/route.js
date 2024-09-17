@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
+import jwt from "jsonwebtoken";
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -10,6 +10,14 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
+  jwt: {
+    async encode({ secret, token }) {
+      return jwt.sign(token, secret);
+    },
+    async decode({ secret, token }) {
+      return jwt.verify(token, secret);
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

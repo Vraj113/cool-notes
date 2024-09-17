@@ -4,6 +4,8 @@ const noteSchema = mongoose.Schema({
   title: { type: String },
   content: { type: String },
   postedBy: { type: String },
+  mood: { type: String },
+  theme: { type: String },
   postedOn: { type: Date, default: Date.now },
 });
 

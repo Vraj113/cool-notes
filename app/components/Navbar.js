@@ -24,7 +24,7 @@ const Navbar = () => {
     getMyQuote();
   }, []);
   return (
-    <div className="sticky bg-pink-300 shadow-md shadow-pink-400 - ">
+    <div className="sticky py-4   z-0 bg-zinc-100 shadow  ">
       <div className="flex justify-around text-bold items-center font-semibold text-lg   md:w-[90vw] m-auto px-4">
         {quote.text && (
           <div className="relative  hidden md:block   bg-gradient-to-r  rounded-lg  text-center overflow-hidden w-[60vw] max-w-[80%]">

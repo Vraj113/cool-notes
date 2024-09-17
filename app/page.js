@@ -73,22 +73,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <img
-        className="  h-36  w-auto hidden md:block  absolute top-9 left-[45%] -z-10"
-        src="./penguin.png"
-      />
-      <img
-        className="md:hidden h-36  w-auto   absolute top-5 left-[30%] -z-10"
-        src="./penguin.png"
-      />
-      <img
-        className="md:hidden h-20  w-auto   absolute top-9 left-[10%] -z-10"
-        src="./bunny.png"
-      />
-      <img
-        className="md:hidden h-20  w-auto   absolute top-9 left-[65%] -z-10"
-        src="./chick.png"
-      />
+
       <img
         className="h-36  w-auto rotate-45 absolute top-40 right-10 -z-10"
         src="./bunny.png"
@@ -98,7 +83,7 @@ export default function Home() {
         src="./chick.png"
       />
       <div
-        className={`md:w-[80vw] md:mx-auto mx-2 border-2 p-4 text-xl my-10 border-pink-600  rounded z-20 shadow-lg  ${
+        className={`md:w-[80vw] relative md:mx-auto mx-2 border-2 p-4 text-xl my-10 border-pink-600  rounded   shadow-lg z-20 ${
           data.theme === "red"
             ? "bg-red-300"
             : data.theme === "blue"
@@ -114,9 +99,26 @@ export default function Home() {
             : ""
         }`}
       >
+        <img
+          className="  h-36  w-auto hidden md:block  absolute -top-12 left-[45%]  -z-10"
+          src="./penguin.png"
+        />
+        <img
+          className="md:hidden h-36  w-auto   absolute -top-12 -left-[6%] -z-10"
+          src="./penguin.png"
+        />
+
+        <img
+          className="md:hidden h-20  w-auto   absolute -top-8  left-[20%] -z-10"
+          src="./bunny.png"
+        />
+        <img
+          className="md:hidden h-20  w-auto   absolute -top-6 left-[70%] -z-10"
+          src="./chick.png"
+        />
         <div className="my-2 flex items-center ">
           <input
-            className="w-[80%] outline-pink-300 p-2 placeholder-black bg-pink-100"
+            className="w-[80%] outline-pink-300 p-2 placeholder-black bg-pink-100 text-lg md:text-xl"
             type="text"
             placeholder="Your Title"
             name="title"
@@ -127,44 +129,62 @@ export default function Home() {
             name="mood"
             value={data.mood}
             onChange={onChange}
-            className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg mx-3 h-full"
+            className="text-2xl cursor-pointer  rounded-lg mx-3 h-full"
           >
             <option
               value={"🙂"}
-              className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg"
+              className="text-3xl cursor-pointer  rounded-lg"
             >
               🙂
             </option>
             <option
               value={"😄"}
-              className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg"
+              className="text-3xl cursor-pointer  rounded-lg"
             >
               😄
             </option>
             <option
               value={"😔"}
-              className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg"
+              className="text-3xl cursor-pointer  rounded-lg"
             >
               😔
             </option>
             <option
+              value={"🥰"}
+              className="text-3xl cursor-pointer  rounded-lg"
+            >
+              🥰
+            </option>
+            <option
+              value={"😂"}
+              className="text-3xl cursor-pointer  rounded-lg"
+            >
+              😂
+            </option>
+            <option
               value={"😭"}
-              className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg"
+              className="text-3xl cursor-pointer  rounded-lg"
             >
               😭
             </option>
             <option
               value={"😠"}
-              className="text-3xl cursor-pointer hover:bg-pink-300 rounded-lg"
+              className="text-3xl cursor-pointer  rounded-lg"
             >
               😠
+            </option>
+            <option
+              value={"🤬"}
+              className="text-3xl cursor-pointer  rounded-lg"
+            >
+              🤬
             </option>
           </select>
           <select
             name="theme"
             value={data.theme}
             onChange={onChange}
-            className="text-2xl cursor-pointer hover:bg-zinc-200   rounded mx-3 h-full bg-zinc-100"
+            className="text-xl cursor-pointer hover:bg-zinc-200   rounded mx-3 h-full bg-zinc-100"
           >
             <option
               value={"white"}
@@ -206,7 +226,7 @@ export default function Home() {
         </div>
         <div className="my-2 ">
           <textarea
-            className="w-full outline-pink-300 p-2 placeholder-black h-[300px] bg-pink-100 "
+            className="w-full outline-pink-300 p-2 placeholder-black h-[300px] bg-pink-100 text-lg md:text-xl"
             placeholder="Today's Note"
             name="content"
             value={data.content}

@@ -54,7 +54,7 @@ export const GET = async () => {
     postedOn: -1,
   });
 
-  const key = await generateEncryptionKey(token);
+  // const key = await generateEncryptionKey(token);
   // let newDecryptedNotes = notes.map((note) => ({
   //   ...note._doc, // Spread note properties
   //   content: decryptText(note.content, key), // Correct decryption

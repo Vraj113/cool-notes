@@ -98,7 +98,7 @@ export default function Home() {
             <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
             <p className="mb-4">Are you sure you want to delete this note?</p>
             <button
-              className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+              className="bg-pink-500 text-white px-4 py-2 rounded mr-2"
               onClick={confirmDelete}
             >
               Delete

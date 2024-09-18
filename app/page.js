@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
+import { motion } from "framer-motion";
 export default function Home() {
   const [notes, setNotes] = useState(null);
   const [data, setData] = useState({
@@ -71,9 +72,11 @@ export default function Home() {
   const showPopUp = (id) => {
     setNoteIdToDelete(id); // Store the note's ID
     setDeleteBox(true); // Show the delete popup
+    document.body.style.overflow = "hidden";
   };
   const confirmDelete = () => {
     handleDelete(noteIdToDelete); // Call the delete function with the stored ID
+    document.body.style.overflow = "auto";
     setDeleteBox(false);
   };
   useEffect(() => {
@@ -90,11 +93,21 @@ export default function Home() {
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <Navbar />
       {deleteBox && (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, scale: 0.7 }}
+            className="bg-white p-6 rounded-lg shadow-lg text-center"
+          >
             <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
             <p className="mb-4">Are you sure you want to delete this note?</p>
             <button
@@ -105,11 +118,13 @@ export default function Home() {
             </button>
             <button
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
-              onClick={() => setDeleteBox(false)}
+              onClick={() => {
+                setDeleteBox(false), (document.body.style.overflow = "auto");
+              }}
             >
               Cancel
             </button>
-          </div>
+          </motion.div>
         </div>
       )}
       <img
@@ -284,7 +299,10 @@ export default function Home() {
         {notes &&
           notes.notes.map((note) => {
             return (
-              <div
+              <motion.div
+                initial={{ y: 10 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.2 }}
                 className={` border-2 border-pink-400 rounded shadow p-2 my-2  cursor-pointer " ${
                   note.theme === "red"
                     ? "bg-red-300"
@@ -324,10 +342,10 @@ export default function Home() {
                 <div className="whitespace-pre-wrap text-lg break-words ">
                   {note.content}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
       </div>
-    </>
+    </motion.div>
   );
 }

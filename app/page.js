@@ -182,7 +182,7 @@ export default function Home() {
             name="mood"
             value={data.mood}
             onChange={onChange}
-            className="text-2xl cursor-pointer  rounded-lg mx-3 h-full"
+            className="text-3xl cursor-pointer  rounded-lg mx-3 h-full"
           >
             <option
               value={"🙂"}

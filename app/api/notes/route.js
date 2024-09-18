@@ -54,13 +54,17 @@ export const GET = async () => {
     postedOn: -1,
   });
 
-  // const key = await generateEncryptionKey(token);
-  // let newDecryptedNotes = notes.map((note) => ({
-  //   ...note._doc, // Spread note properties
-  //   content: decryptText(note.content, key), // Correct decryption
-  // }));
+  const key = await generateEncryptionKey(token);
 
-  return NextResponse.json({ notes });
+  if (notes.length != 0) {
+    let newDecryptedNotes = notes.map((note) => ({
+      ...note._doc, // Spread note properties
+      content: decryptText(note.content, key), // Correct decryption
+    }));
+    return NextResponse.json({ notes: newDecryptedNotes });
+  } else {
+    return NextResponse.json({ notes });
+  }
 };
 
 // POST request handler
@@ -75,9 +79,6 @@ export async function POST(req) {
   const contentToEncrypt = String(body.content);
 
   const key = await generateEncryptionKey(token);
-
-  // Log to check key type
-  console.log("Encryption Key Type:", typeof token);
 
   const encryptedText = encryptText(contentToEncrypt, key); // Encrypt the content
 

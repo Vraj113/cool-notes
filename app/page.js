@@ -315,13 +315,13 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="font-semibold  inline text-3xl">
+                <div className="font-semibold  inline text-3xl break-words ">
                   {note.title}
                 </div>
-                <div className="font-semibold text-2xl inline ml-2  ">
+                <div className="font-semibold text-2xl inline ml-2 ">
                   {note.mood}
                 </div>
-                <div className="whitespace-pre-wrap text-lg">
+                <div className="whitespace-pre-wrap text-lg break-words ">
                   {note.content}
                 </div>
               </div>

@@ -114,5 +114,5 @@ export const DELETE = async (request) => {
   // Delete the note by ID
   await Note.findOneAndDelete({ _id: body.id });
 
-  return NextResponse.json({ message: "Note deleted successfully" });
+  return NextResponse.json({ success: true });
 };

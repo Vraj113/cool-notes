@@ -15,7 +15,6 @@ export default function Home() {
 
   const onChange = async (e) => {
     e.preventDefault();
-    console.log(data);
     if (e.target.name === "title") {
       setData({ ...data, title: e.target.value });
     }
@@ -39,7 +38,7 @@ export default function Home() {
     });
 
     const notes = await response.json();
-    console.log(notes);
+
     setNotes(notes);
   };
 
@@ -67,7 +66,13 @@ export default function Home() {
       },
       body: JSON.stringify({ id: id }),
     });
-    getNotes();
+    document.body.style.overflow = "auto";
+    let ress = await res.json();
+
+    if (ress.success) {
+      setDeleteBox(false);
+      getNotes();
+    }
   };
   const showPopUp = (id) => {
     setNoteIdToDelete(id); // Store the note's ID
@@ -76,8 +81,6 @@ export default function Home() {
   };
   const confirmDelete = () => {
     handleDelete(noteIdToDelete); // Call the delete function with the stored ID
-    document.body.style.overflow = "auto";
-    setDeleteBox(false);
   };
   useEffect(() => {
     getNotes();

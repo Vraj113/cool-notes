@@ -54,7 +54,7 @@ export const GET = async () => {
     postedOn: -1,
   });
 
-  const key = await generateEncryptionKey(token);
+  const key = await generateEncryptionKey(String(token));
 
   if (notes.length != 0) {
     let newDecryptedNotes = notes.map((note) => ({
@@ -78,7 +78,7 @@ export async function POST(req) {
   // Ensure content is a string
   const contentToEncrypt = String(body.content);
 
-  const key = await generateEncryptionKey(token);
+  const key = await generateEncryptionKey(String(token));
 
   const encryptedText = encryptText(contentToEncrypt, key); // Encrypt the content
 

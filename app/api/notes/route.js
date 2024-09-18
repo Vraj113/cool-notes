@@ -66,7 +66,7 @@ export const GET = async () => {
 // POST request handler
 export async function POST(req) {
   const cookieStore = cookies();
-  const token = cookieStore.get("next-auth.session-token")?.value;
+  const token = String(cookieStore.get("next-auth.session-token")?.value);
 
   await connectDb();
   const body = await req.json();
@@ -77,7 +77,7 @@ export async function POST(req) {
   const key = await generateEncryptionKey(token);
 
   // Log to check key type
-  console.log("Encryption Key Type:", typeof key);
+  console.log("Encryption Key Type:", typeof token);
 
   const encryptedText = encryptText(contentToEncrypt, key); // Encrypt the content
 

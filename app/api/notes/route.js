@@ -70,8 +70,16 @@ export async function POST(req) {
 
   await connectDb();
   const body = await req.json();
+
+  // Ensure content is a string
+  const contentToEncrypt = String(body.content);
+
   const key = await generateEncryptionKey(token);
-  const encryptedText = encryptText(body.content, key); // Encrypt the content
+
+  // Log to check key type
+  console.log("Encryption Key Type:", typeof key);
+
+  const encryptedText = encryptText(contentToEncrypt, key); // Encrypt the content
 
   const session = await getServerSession(authOptions);
   if (!session) {

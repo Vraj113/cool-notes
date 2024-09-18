@@ -74,6 +74,7 @@ export default function Home() {
   };
   const confirmDelete = () => {
     handleDelete(noteIdToDelete); // Call the delete function with the stored ID
+    setDeleteBox(false);
   };
   useEffect(() => {
     getNotes();

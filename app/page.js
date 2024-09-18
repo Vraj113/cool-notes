@@ -12,6 +12,7 @@ export default function Home() {
   });
   const [deleteBox, setDeleteBox] = useState(false); // State to control delete popup
   const [noteIdToDelete, setNoteIdToDelete] = useState(null); // Store the ID of the note to delete
+  const [deleteLoading, setDeleteLoading] = useState(false); // Store the ID of the note to delete
 
   const onChange = async (e) => {
     e.preventDefault();
@@ -59,6 +60,7 @@ export default function Home() {
     setData({ ...data, title: "", content: "" });
   };
   const handleDelete = async (id) => {
+    setDeleteLoading(true);
     const res = await fetch("/api/notes", {
       method: "DELETE",
       headers: {
@@ -71,6 +73,7 @@ export default function Home() {
 
     if (ress.success) {
       setDeleteBox(false);
+      setDeleteLoading(false);
       getNotes();
     }
   };
@@ -113,20 +116,26 @@ export default function Home() {
           >
             <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
             <p className="mb-4">Are you sure you want to delete this note?</p>
-            <button
-              className="bg-pink-500 text-white px-4 py-2 rounded mr-2"
-              onClick={confirmDelete}
-            >
-              Delete
-            </button>
-            <button
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
-              onClick={() => {
-                setDeleteBox(false), (document.body.style.overflow = "auto");
-              }}
-            >
-              Cancel
-            </button>
+            <div className="flex justify-center">
+              <button
+                className="bg-pink-500 text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center"
+                onClick={confirmDelete}
+              >
+                {!deleteLoading && "Delete"}
+
+                {deleteLoading && (
+                  <img src="/loading.gif" className="w-auto  h-8 " />
+                )}
+              </button>
+              <button
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded h-10"
+                onClick={() => {
+                  setDeleteBox(false), (document.body.style.overflow = "auto");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </motion.div>
         </div>
       )}

@@ -172,6 +172,14 @@ export default function Home() {
           className="md:hidden h-36  w-auto -rotate-90  absolute top-[40%] -left-[12%] -z-10"
           src="./penguin.png"
         />
+        <img
+          className="  h-36  w-auto hidden md:block  absolute -top-16 left-[20%]  -z-10"
+          src="./puppy.png"
+        />
+        <img
+          className="md:hidden h-36  w-auto   absolute -top-[20%] left-[30%] -z-10"
+          src="./puppy.png"
+        />
 
         <img
           className="md:hidden h-20  w-auto   absolute -top-8  left-[10%] -z-10"

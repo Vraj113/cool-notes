@@ -1,16 +1,24 @@
 import { motion } from "framer-motion";
 import React from "react";
-
+import connectDb from "@/app/middleware/db";
+import Note from "@/app/models/Note";
 const Admin = async () => {
-  const response = await fetch(`/api/admin/notes`, {
-    method: "GET",
-  });
-  const notes = await response.json();
+  await connectDb();
+  let notes = await Note.find({});
 
-  const userResponse = await fetch(`/api/admin/users`, {
-    method: "GET",
+  let usersData = notes.map((note) => {
+    return { email: note.postedBy };
   });
-  const users = await userResponse.json(); // Fetch the full API response
+
+  let uniqueUsers = Array.from(
+    new Set(usersData.map((user) => user.email))
+  ).map((email) => {
+    return {
+      email: email,
+    };
+  });
+
+  const users = Array.from(uniqueUsers); // Fetch the full API response
 
   const formatDate = (isoString) => {
     const options = {
@@ -28,8 +36,8 @@ const Admin = async () => {
         All Users
       </div>
       <div className="bg-zinc-100 flex flex-wrap gap-10 p-10 text-lg">
-        {users?.users && users.users.length > 0 ? (
-          users.users.map((user) => (
+        {users ? (
+          users.map((user) => (
             <div
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
               key={user.email}
@@ -49,7 +57,7 @@ const Admin = async () => {
       </div>
       <div className="bg-zinc-100 flex flex-wrap gap-10 p-10 text-lg">
         {notes ? (
-          notes.notes.map((note) => (
+          notes.map((note) => (
             <div
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
               key={note.id}

@@ -6,9 +6,10 @@ export const metadata = {
   title: "Cute Notes App",
   description: "❤️❤️❤️",
   manifest: "/manifest.json",
+};
+export const viewport = {
   themeColor: "#000000",
 };
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

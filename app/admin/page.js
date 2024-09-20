@@ -2,20 +2,14 @@ import { motion } from "framer-motion";
 import React from "react";
 
 const Admin = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/notes`,
-    {
-      method: "GET",
-    }
-  );
+  const response = await fetch(`LIC_BASE_URL}/api/admin/notes`, {
+    method: "GET",
+  });
   const notes = await response.json();
 
-  const userResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users`,
-    {
-      method: "GET",
-    }
-  );
+  const userResponse = await fetch(`/api/admin/users`, {
+    method: "GET",
+  });
   const users = await userResponse.json(); // Fetch the full API response
 
   const formatDate = (isoString) => {

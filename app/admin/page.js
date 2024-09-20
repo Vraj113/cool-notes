@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import React from "react";
 
 const Admin = async () => {
-  const response = await fetch(`LIC_BASE_URL}/api/admin/notes`, {
+  const response = await fetch(`/api/admin/notes`, {
     method: "GET",
   });
   const notes = await response.json();

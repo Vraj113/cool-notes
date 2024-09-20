@@ -2,10 +2,15 @@ import { motion } from "framer-motion";
 import React from "react";
 import connectDb from "@/app/middleware/db";
 import Note from "@/app/models/Note";
+
 const Admin = async () => {
+  // Ensure database connection
   await connectDb();
+
+  // Fetch fresh data from the database
   let notes = await Note.find({});
 
+  // Extract unique users from notes
   let usersData = notes.map((note) => {
     return { email: note.postedBy };
   });
@@ -13,16 +18,12 @@ const Admin = async () => {
   let uniqueUsers = Array.from(
     new Set(usersData.map((user) => user.email))
   ).map((email) => {
-    return {
-      email: email,
-    };
+    return { email: email };
   });
 
-  const users = Array.from(uniqueUsers); // Fetch the full API response
-
+  // Define date formatting function
   const formatDate = (isoString) => {
     const options = {
-      // year: "numeric",
       month: "short",
       day: "numeric",
     };
@@ -36,8 +37,8 @@ const Admin = async () => {
         All Users
       </div>
       <div className="bg-zinc-100 flex flex-wrap gap-10 p-10 text-lg">
-        {users ? (
-          users.map((user) => (
+        {uniqueUsers.length > 0 ? (
+          uniqueUsers.map((user) => (
             <div
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
               key={user.email}
@@ -56,11 +57,11 @@ const Admin = async () => {
         All Posts
       </div>
       <div className="bg-zinc-100 flex flex-wrap gap-10 p-10 text-lg">
-        {notes ? (
+        {notes.length > 0 ? (
           notes.map((note) => (
             <div
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
-              key={note.id}
+              key={note._id}
             >
               <div className="flex flex-col">
                 <div>{"Posted By : " + note.postedBy}</div>

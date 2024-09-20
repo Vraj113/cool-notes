@@ -14,7 +14,6 @@ const Admin = async () => {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users`,
     {
       method: "GET",
-      cache: "no-store",
     }
   );
   const users = await userResponse.json(); // Fetch the full API response

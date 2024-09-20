@@ -2,15 +2,21 @@ import { motion } from "framer-motion";
 import React from "react";
 
 const Admin = async () => {
-  const response = await fetch("http://localhost:3000/api/admin/notes", {
-    method: "GET",
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/notes`,
+    {
+      method: "GET",
+    }
+  );
   const notes = await response.json();
 
-  const userResponse = await fetch("http://localhost:3000/api/admin/users", {
-    method: "GET",
-    cache: "no-store",
-  });
+  const userResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
   const users = await userResponse.json(); // Fetch the full API response
 
   const formatDate = (isoString) => {
@@ -49,8 +55,8 @@ const Admin = async () => {
         All Posts
       </div>
       <div className="bg-zinc-100 flex flex-wrap gap-10 p-10 text-lg">
-        {Array.isArray(notes) && notes.length > 0 ? (
-          notes.map((note) => (
+        {notes ? (
+          notes.notes.map((note) => (
             <div
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
               key={note.id}

@@ -3,23 +3,26 @@ import React from "react";
 import connectDb from "@/app/middleware/db";
 import Note from "@/app/models/Note";
 
-const Admin = async () => {
-  // Ensure database connection
+export const revalidate = 0; // Disable caching (ISR)
+
+async function fetchNotesAndUsers() {
   await connectDb();
 
   // Fetch fresh data from the database
-  let notes = await Note.find({});
+  const notes = await Note.find({});
 
   // Extract unique users from notes
-  let usersData = notes.map((note) => {
-    return { email: note.postedBy };
-  });
+  const usersData = notes.map((note) => ({ email: note.postedBy }));
 
-  let uniqueUsers = Array.from(
+  const uniqueUsers = Array.from(
     new Set(usersData.map((user) => user.email))
-  ).map((email) => {
-    return { email: email };
-  });
+  ).map((email) => ({ email }));
+
+  return { notes, uniqueUsers };
+}
+
+const Admin = async () => {
+  const { notes, uniqueUsers } = await fetchNotesAndUsers();
 
   // Define date formatting function
   const formatDate = (isoString) => {
@@ -63,12 +66,14 @@ const Admin = async () => {
               className="bg-yellow-50 p-4 border-2 w-fit font-semibold rounded"
               key={note._id}
             >
-              <div className="flex flex-col">
+              <div className="flex flex-col break-words">
                 <div>{"Posted By : " + note.postedBy}</div>
                 <div>{"Theme :  " + note.theme}</div>
                 <div>{"Posted On : " + formatDate(note.postedOn)}</div>
                 <div>{"Title: " + note.title}</div>
-                <div>{"Content : " + note.content}</div>
+                <div className="break-words whitespace-pre-wrap w-fit max-w-[40vw]">
+                  {"Content : " + note.content}
+                </div>
                 <div>{"Mood : " + note.mood}</div>
               </div>
             </div>

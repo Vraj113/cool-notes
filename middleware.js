@@ -7,7 +7,6 @@ export async function middleware(request) {
     cookieStore.get("next-auth.session-token")?.value ||
     cookieStore.get("__Secure-next-auth.session-token")?.value;
   const { pathname } = request.nextUrl;
-  console.log(token + "pathname: " + pathname);
   // Allow access to the login page without a token
   if (pathname === "/login") {
     if (token) {

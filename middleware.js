@@ -8,7 +8,7 @@ export async function middleware(request) {
   const token =
     cookieStore.get("next-auth.session-token")?.value ||
     cookieStore.get("__Secure-next-auth.session-token")?.value;
-  // var decoded = jwt.verify(token, "dahdskndsakndsn");
+  // var decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET);
   // console.log(decoded);
   const { pathname } = request.nextUrl;
   // Allow access to the login page without a token

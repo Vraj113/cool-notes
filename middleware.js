@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getToken } from "next-auth/jwt";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../notes/app/api/auth/[...nextauth]/route";
-
+var jwt = require("jsonwebtoken");
 export async function middleware(request) {
   const cookieStore = cookies();
   // const session = await getServerSession(authOptions);
@@ -12,6 +8,8 @@ export async function middleware(request) {
   const token =
     cookieStore.get("next-auth.session-token")?.value ||
     cookieStore.get("__Secure-next-auth.session-token")?.value;
+  // var decoded = jwt.verify(token, "dahdskndsakndsn");
+  // console.log(decoded);
   const { pathname } = request.nextUrl;
   // Allow access to the login page without a token
 

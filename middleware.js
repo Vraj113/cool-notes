@@ -1,18 +1,39 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-var jwt = require("jsonwebtoken");
+import * as jose from "jose";
+
 export async function middleware(request) {
   const cookieStore = cookies();
-  // const session = await getServerSession(authOptions);
-  // console.log(session);
+
   const token =
     cookieStore.get("next-auth.session-token")?.value ||
     cookieStore.get("__Secure-next-auth.session-token")?.value;
-  // var decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET);
-  // console.log(decoded);
-  const { pathname } = request.nextUrl;
-  // Allow access to the login page without a token
 
+  if (token) {
+    try {
+      // Convert the secret into a Uint8Array
+      const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
+
+      // Verify the token with the secret
+      var decoded = await jose.jwtVerify(token, secret);
+    } catch (error) {
+      console.error("Token verification error:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  const { pathname } = request.nextUrl;
+
+  // Allow access to the login page without a token
+  if (pathname === "/admin") {
+    let email = decoded.payload.email;
+    let authorized_email = process.env.AUTHORIZED_EMAIL;
+
+    if (email === authorized_email) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/", request.url));
+  }
   if (pathname === "/login") {
     if (token) {
       // If logged in, redirect away from login page to home
@@ -30,5 +51,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/", "/login"], // Define paths for middleware
+  matcher: ["/", "/login", "/admin"], // Define paths for middleware
 };

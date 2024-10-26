@@ -25,10 +25,10 @@ const Navbar = () => {
   }, []);
   return (
     <div className="sticky py-4   z-0 bg-zinc-100 shadow overflow-hidden ">
-      <img
+      {/* <img
         src="/bg.png"
         className="absolute -top-80 right-0 opacity-40 bg-repeat-x -z-10"
-      />
+      /> */}
       <div className="flex z-50 opacity-100 justify-around text-bold items-center font -semibold text-lg   md:w-[90vw] m-auto px-4">
         {quote.text && (
           <div className="relative  hidden md:block   bg-gradient-to-r  rounded-lg  text-center overflow-hidden w-[60vw] max-w-[80%]">

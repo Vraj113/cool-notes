@@ -120,17 +120,17 @@ export default function Home() {
               <button
                 className={`bg-pink-500 text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center ${
                   data.theme === "red"
-                    ? "bg-red-300"
+                    ? "bg-red-500"
                     : data.theme === "blue"
-                    ? "bg-blue-300"
+                    ? "bg-blue-500"
                     : data.theme === "green"
-                    ? "bg-green-300"
+                    ? "bg-green-500"
                     : data.theme === "pink"
-                    ? "bg-pink-300"
+                    ? "bg-pink-500"
                     : data.theme === "white"
-                    ? "bg-white"
+                    ? "bg-zinc-600"
                     : data.theme === "yellow"
-                    ? "bg-yellow-300"
+                    ? "bg-yellow-500"
                     : ""
                 }`}
                 onClick={confirmDelete}

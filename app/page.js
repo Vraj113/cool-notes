@@ -102,7 +102,7 @@ export default function Home() {
     <motion.div
       initial={{ y: 10 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       <Navbar />
       {deleteBox && (
@@ -118,7 +118,21 @@ export default function Home() {
             <p className="mb-4">Are you sure you want to delete this note?</p>
             <div className="flex justify-center">
               <button
-                className="bg-pink-500 text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center"
+                className={`bg-pink-500 text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center ${
+                  data.theme === "red"
+                    ? "bg-red-300"
+                    : data.theme === "blue"
+                    ? "bg-blue-300"
+                    : data.theme === "green"
+                    ? "bg-green-300"
+                    : data.theme === "pink"
+                    ? "bg-pink-300"
+                    : data.theme === "white"
+                    ? "bg-white"
+                    : data.theme === "yellow"
+                    ? "bg-yellow-300"
+                    : ""
+                }`}
                 onClick={confirmDelete}
               >
                 {!deleteLoading && "Delete"}

@@ -118,21 +118,7 @@ export default function Home() {
             <p className="mb-4">Are you sure you want to delete this note?</p>
             <div className="flex justify-center">
               <button
-                className={`bg-pink-500 text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center ${
-                  data.theme === "red"
-                    ? "bg-red-500"
-                    : data.theme === "blue"
-                    ? "bg-blue-500"
-                    : data.theme === "green"
-                    ? "bg-green-500"
-                    : data.theme === "pink"
-                    ? "bg-pink-500"
-                    : data.theme === "white"
-                    ? "bg-zinc-600"
-                    : data.theme === "yellow"
-                    ? "bg-yellow-500"
-                    : ""
-                }`}
+                className={`  text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center bg-red-500`}
                 onClick={confirmDelete}
               >
                 {!deleteLoading && "Delete"}

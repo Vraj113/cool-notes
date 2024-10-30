@@ -90,7 +90,6 @@ export default function Home() {
   }, []);
   const formatDate = (isoString) => {
     const options = {
-      // year: "numeric",
       month: "short",
       day: "numeric",
     };

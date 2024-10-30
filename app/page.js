@@ -149,17 +149,17 @@ export default function Home() {
       <div
         className={`md:w-[80vw] relative md:mx-auto mx-2 border-2 p-4 text-xl my-10 border-pink-600  rounded   shadow-lg z-20 ${
           data.theme === "red"
-            ? "bg-red-300"
+            ? "bg-red-400"
             : data.theme === "blue"
-            ? "bg-blue-300"
+            ? "bg-blue-400"
             : data.theme === "green"
-            ? "bg-green-300"
+            ? "bg-green-400"
             : data.theme === "pink"
-            ? "bg-pink-300"
+            ? "bg-pink-400"
             : data.theme === "white"
             ? "bg-white"
             : data.theme === "yellow"
-            ? "bg-yellow-300"
+            ? "bg-yellow-400"
             : ""
         }`}
       >

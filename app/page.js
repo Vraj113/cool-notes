@@ -13,6 +13,7 @@ export default function Home() {
   const [deleteBox, setDeleteBox] = useState(false); // State to control delete popup
   const [noteIdToDelete, setNoteIdToDelete] = useState(null); // Store the ID of the note to delete
   const [deleteLoading, setDeleteLoading] = useState(false); // Store the ID of the note to delete
+  const [addNoteLoading, setAddNoteLoading] = useState(false); // Store the ID of the note to delete
 
   const onChange = async (e) => {
     e.preventDefault();
@@ -45,9 +46,11 @@ export default function Home() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
     if (data.title == "" || data.content === "") {
       return;
     }
+    setAddNoteLoading(true);
     const res = await fetch("/api/notes", {
       method: "POST",
       headers: {
@@ -57,6 +60,7 @@ export default function Home() {
     });
     let response = await res.json();
     getNotes();
+    setAddNoteLoading(false);
     setData({ ...data, title: "", content: "" });
   };
   const handleDelete = async (id) => {
@@ -147,7 +151,7 @@ export default function Home() {
         src="./chick.png"
       />
       <div
-        className={`md:w-[80vw] relative md:mx-auto mx-2 border-2 p-4 text-xl my-10 border-pink-600  rounded   shadow-lg z-20 ${
+        className={`md:w-[80vw] relative md:mx-auto mx-2 p-4 text-xl my-10   rounded-lg   shadow-lg shadow-zinc-300 z-20 ${
           data.theme === "red"
             ? "bg-red-400"
             : data.theme === "blue"
@@ -157,7 +161,7 @@ export default function Home() {
             : data.theme === "pink"
             ? "bg-pink-400"
             : data.theme === "white"
-            ? "bg-white"
+            ? "bg-zinc-100"
             : data.theme === "yellow"
             ? "bg-yellow-400"
             : ""
@@ -190,7 +194,7 @@ export default function Home() {
         />
         <div className="my-2 flex items-center ">
           <input
-            className="w-[80%] outline-pink-300 p-2 placeholder-black bg-pink-100 text-lg md:text-xl  playpen-sans-v "
+            className="w-[80%]  p-2 placeholder-zinc-500   text-lg md:text-xl  playpen-sans-v "
             type="text"
             placeholder="Your Title"
             name="title"
@@ -298,7 +302,7 @@ export default function Home() {
         </div>
         <div className="my-2 ">
           <textarea
-            className="w-full outline-pink-300 p-2 placeholder-black h-[300px] bg-pink-100 text-lg md:text-xl  playpen-sans-v "
+            className="w-full  p-2 placeholder-zinc-500 h-[300px]  opacity-95 text-lg md:text-xl  playpen-sans-v "
             placeholder="Today's Note"
             name="content"
             value={data.content}
@@ -307,14 +311,19 @@ export default function Home() {
         </div>
         <div>
           <button
-            className="bg-gray-900 rounded text-white  p-2 text-lg'"
+            className="bg-gray-900 rounded text-white      px-4 py-2   h-12 w-40 flex justify-center items-center'"
             onClick={onSubmit}
           >
-            Post the note
+            {!addNoteLoading && "Post the Note"}
+
+            {addNoteLoading && (
+              <img src="/loading.gif" className="w-auto  h-8 " />
+            )}
           </button>
         </div>
       </div>
       <div className=" md:w-[80vw] md:m-auto mx-2   m-auto">
+        <div className="text-3xl md:text-4xl font-semibold">Your Notes</div>
         {notes &&
           notes.notes.map((note) => {
             return (
@@ -322,19 +331,19 @@ export default function Home() {
                 initial={{ y: 10 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.2 }}
-                className={` border-2 border-pink-400 rounded shadow p-2 my-2  cursor-pointer " ${
+                className={`    p-2 my-4  cursor-pointer   rounded-lg   shadow-lg shadow-zinc-300" ${
                   note.theme === "red"
-                    ? "bg-red-300"
+                    ? "bg-red-400"
                     : note.theme === "blue"
-                    ? "bg-blue-300"
+                    ? "bg-blue-400"
                     : note.theme === "green"
-                    ? "bg-green-300"
+                    ? "bg-green-400"
                     : note.theme === "pink"
-                    ? "bg-pink-300"
+                    ? "bg-pink-400"
                     : note.theme === "white"
                     ? "bg-white"
                     : note.theme === "yellow"
-                    ? "bg-yellow-300"
+                    ? "bg-yellow-400"
                     : ""
                 }`}
                 key={note.id}

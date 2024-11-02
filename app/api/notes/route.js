@@ -58,8 +58,8 @@ export const GET = async () => {
 
   if (notes.length != 0) {
     let newDecryptedNotes = notes.map((note) => ({
-      ...note._doc, // Spread note properties
-      content: decryptText(note.content, key), // Correct decryption
+      ...note._doc,
+      content: decryptText(note.content, key),
     }));
     return NextResponse.json({ notes: newDecryptedNotes });
   } else {
@@ -67,7 +67,6 @@ export const GET = async () => {
   }
 };
 
-// POST request handler
 export async function POST(req) {
   const cookieStore = cookies();
   const token = String(cookieStore.get("next-auth.session-token")?.value);
@@ -75,7 +74,6 @@ export async function POST(req) {
   await connectDb();
   const body = await req.json();
 
-  // Ensure content is a string
   const contentToEncrypt = String(body.content);
 
   const key = await generateEncryptionKey(String(token));
@@ -87,7 +85,6 @@ export async function POST(req) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  // Create a new note
   const newNote = new Note({
     title: body.title,
     content: encryptedText, // Store encrypted content
@@ -101,7 +98,6 @@ export async function POST(req) {
   return NextResponse.json({ message: "Note Saved successfully" });
 }
 
-// DELETE request handler
 export const DELETE = async (request) => {
   const session = await getServerSession(authOptions);
   const body = await request.json();
@@ -111,7 +107,7 @@ export const DELETE = async (request) => {
   }
 
   await connectDb();
-  // Delete the note by ID
+
   await Note.findOneAndDelete({ _id: body.id });
 
   return NextResponse.json({ success: true });

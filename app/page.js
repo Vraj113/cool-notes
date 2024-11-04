@@ -10,10 +10,10 @@ export default function Home() {
     mood: "🙂",
     theme: "white",
   });
-  const [deleteBox, setDeleteBox] = useState(false); // State to control delete popup
-  const [noteIdToDelete, setNoteIdToDelete] = useState(null); // Store the ID of the note to delete
-  const [deleteLoading, setDeleteLoading] = useState(false); // Store the ID of the note to delete
-  const [addNoteLoading, setAddNoteLoading] = useState(false); // Store the ID of the note to delete
+  const [deleteBox, setDeleteBox] = useState(false);
+  const [noteIdToDelete, setNoteIdToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [addNoteLoading, setAddNoteLoading] = useState(false);
 
   const onChange = async (e) => {
     e.preventDefault();
@@ -82,12 +82,12 @@ export default function Home() {
     }
   };
   const showPopUp = (id) => {
-    setNoteIdToDelete(id); // Store the note's ID
-    setDeleteBox(true); // Show the delete popup
+    setNoteIdToDelete(id);
+    setDeleteBox(true);
     document.body.style.overflow = "hidden";
   };
   const confirmDelete = () => {
-    handleDelete(noteIdToDelete); // Call the delete function with the stored ID
+    handleDelete(noteIdToDelete);
   };
   useEffect(() => {
     getNotes();

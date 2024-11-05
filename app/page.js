@@ -302,7 +302,7 @@ export default function Home() {
         </div>
         <div className="my-2 ">
           <textarea
-            className="w-full  p-2 placeholder-zinc-500 h-[300px]  opacity-95 text-lg md:text-xl  playpen-sans-v "
+            className="w-full  p-2 placeholder-zinc-500 h-[300px]   text-lg md:text-xl  playpen-sans-v "
             placeholder="Today's Note"
             name="content"
             value={data.content}

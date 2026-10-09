@@ -1,60 +1,80 @@
-@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playpen+Sans:wght@100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Playpen+Sans:wght@400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@keyframes glitter {
-  0% {
-    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 15px #ff0;
-  }
-  50% {
-    text-shadow: 0 0 5px #ff0, 0 0 20px #ff0, 0 0 30px #ff0;
-  }
-  100% {
-    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 15px #ff0;
-  }
-}
 
-.glitter {
-  animation: glitter 1.5s infinite;
-}
-.playpen-sans-v {
-  font-family: "Playpen Sans", cursive;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.great-vibes-regular {
-  font-family: "Great Vibes", cursive;
-  font-weight: 500;
-  font-style: normal;
-  font-size: 1.5rem; /* Adjust size to your preference */
-  line-height: 1.2; /* Customize line height */
-  letter-spacing: 1px; /* Adjust letter spacing */
-}
-
-/* 
+@layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
+    --cream: #fff8f3;
+    --ink: #2d2a32;
+    --muted: #6b6570;
+    --blush: #f472b6;
+    --lavender: #a78bfa;
   }
 
   body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
+    @apply text-ink antialiased;
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100vh;
+    background-color: var(--cream);
+    background-image:
+      radial-gradient(ellipse 90% 60% at 10% -5%, rgba(251, 207, 232, 0.55), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 95% 5%, rgba(196, 181, 253, 0.4), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(253, 230, 138, 0.28), transparent 55%);
   }
 
-  @layer utilities {
-    .text-balance {
-      text-wrap: balance;
-    }
-  } */
+  .font-display {
+    font-family: "Fraunces", Georgia, serif;
+  }
+
+  .font-hand {
+    font-family: "Playpen Sans", cursive;
+  }
+
+  .glass-panel {
+    @apply rounded-[1.75rem] border border-white/70 bg-white/75 shadow-xl shadow-rose-100/40 backdrop-blur-md;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-zinc-200/60 bg-white px-4 py-3 placeholder:text-zinc-400 transition focus:border-rose-300 focus:outline-none focus:ring-4 focus:ring-rose-100;
+    color: var(--ink);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-fuchsia-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-300/40 transition hover:from-rose-600 hover:to-fuchsia-600 hover:shadow-rose-400/50 active:scale-[0.98] disabled:opacity-60;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-2xl border border-zinc-200 bg-white px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-zinc-50;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-2xl bg-rose-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-600 active:scale-[0.98] disabled:opacity-60;
+  }
+
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-muted;
+  }
+
+  .pet-peek {
+    filter: drop-shadow(0 8px 16px rgba(244, 114, 182, 0.25));
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .pet-sticker {
+    @apply flex flex-col items-center rounded-2xl bg-white px-2.5 pb-2 pt-2 shadow-md shadow-pink-200/40 ring-2 ring-white/90;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .pet-sticker-label {
+    @apply mt-1 text-[10px] font-semibold uppercase tracking-wide text-rose-500/90;
+  }
+}

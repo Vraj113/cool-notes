@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import connectDb from "@/app/middleware/db";
 import Note from "@/app/models/Note";
 import { cookies } from "next/headers";
-const crypto = require("crypto");
+import crypto from "node:crypto";
+
+export const dynamic = "force-dynamic";
+
+function getSessionToken(cookieStore) {
+  return (
+    cookieStore.get("next-auth.session-token")?.value ||
+    cookieStore.get("__Secure-next-auth.session-token")?.value
+  );
+}
 
 // Generate a consistent encryption key using token and server-side secret
-async function generateEncryptionKey(token) {
-  const secret = process.env.SECRET_KEY; // This is a server-side secret
+function generateEncryptionKey(token) {
+  const secret = process.env.SECRET_KEY;
   return crypto
     .createHmac("sha256", secret)
     .update(token)
@@ -40,51 +49,70 @@ function decryptText(encryptedText, key) {
 }
 
 export const GET = async () => {
-  const session = await getServerSession(authOptions);
-  const cookieStore = cookies();
-  const token = cookieStore.get("next-auth.session-token")?.value;
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+    }
 
+    const cookieStore = cookies();
+    const token = getSessionToken(cookieStore);
+    if (!token) {
+      return NextResponse.json({ message: "No session token" }, { status: 401 });
+    }
+
+    await connectDb();
+    const notes = await Note.find({ postedBy: session.user?.email }).sort({
+      postedOn: -1,
+    });
+
+    const key = generateEncryptionKey(String(token));
+    const decrypted = notes.map((note) => {
+      try {
+        return {
+          ...note.toObject(),
+          content: decryptText(note.content, key),
+        };
+      } catch {
+        return {
+          ...note.toObject(),
+          content: "[Could not decrypt this note]",
+        };
+      }
+    });
+
+    return NextResponse.json({ notes: decrypted });
+  } catch (error) {
+    console.error("GET /api/notes:", error);
+    const detail =
+      process.env.NODE_ENV === "development" ? error?.message : undefined;
+    return NextResponse.json(
+      {
+        message: "Failed to load notes",
+        detail,
+        notes: [],
+      },
+      { status: 503 }
+    );
+  }
+};
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  await connectDb();
-  // Find notes by email (adjust if needed)
-  let notes = await Note.find({ postedBy: session.user?.email }).sort({
-    postedOn: -1,
-  });
-
-  const key = await generateEncryptionKey(String(token));
-
-  if (notes.length != 0) {
-    let newDecryptedNotes = notes.map((note) => ({
-      ...note._doc,
-      content: decryptText(note.content, key),
-    }));
-    return NextResponse.json({ notes: newDecryptedNotes });
-  } else {
-    return NextResponse.json({ notes });
-  }
-};
-
-export async function POST(req) {
   const cookieStore = cookies();
-  const token = String(cookieStore.get("next-auth.session-token")?.value);
+  const token = getSessionToken(cookieStore);
+  if (!token) {
+    return NextResponse.json({ message: "No session token" }, { status: 401 });
+  }
 
   await connectDb();
   const body = await req.json();
-
   const contentToEncrypt = String(body.content);
-
-  const key = await generateEncryptionKey(String(token));
-
-  const encryptedText = encryptText(contentToEncrypt, key); // Encrypt the content
-
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-  }
-
+  const key = generateEncryptionKey(String(token));
+  const encryptedText = encryptText(contentToEncrypt, key);
   const newNote = new Note({
     title: body.title,
     content: encryptedText, // Store encrypted content

@@ -1,63 +1,67 @@
 "use client";
-import React from "react";
+
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const Navbar = () => {
-  const { data: session, status } = useSession();
-
+export default function Navbar() {
+  const { data: session } = useSession();
   const [quote, setQuote] = useState({ text: "", author: "" });
   const router = useRouter();
-  const getMyQuote = async () => {
-    const response = await fetch("/api/quotes", {
-      method: "GET",
-    });
-    const quote = await response.json();
-    setQuote(quote);
-  };
-  const handleSignOut = async () => {
-    await signOut({ redirect: false }); // This prevents the default redirect behavior
-    router.push("login");
-  };
+
+  const name = session?.user?.name || "Friend";
+  const initial = name.charAt(0).toUpperCase();
+
   useEffect(() => {
-    getMyQuote();
+    fetch("/api/quotes")
+      .then((res) => res.json())
+      .then(setQuote)
+      .catch(() => {});
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    router.push("/login");
+  };
+
   return (
-    <div className="sticky py-4   z-0 bg-zinc-100 shadow overflow-hidden ">
-      {/* <img
-        src="/bg.png"
-        className="absolute -top-80 right-0 opacity-40 bg-repeat-x -z-10"
-      /> */}
-      <div className="flex z-50 opacity-100 justify-around text-bold items-center font -semibold text-lg   md:w-[90vw] m-auto px-4">
-        {quote.text && (
-          <div className="relative  hidden md:block   bg-gradient-to-r  rounded-lg  text-center overflow-hidden w-[60vw] max-w-[80%]">
-            <p className="text-xl font-semibold text-gray-800  great-vibes-regular">
-              ✨{quote.text}✨
-            </p>
-            <footer className="mt-2  text-sm great-vibes-regular">
-              - {quote.author}
-            </footer>
+    <header className="sticky top-0 z-40 border-b border-white/50 bg-white/60 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-fuchsia-500 text-lg shadow-md shadow-rose-200/50">
+            ✨
           </div>
-        )}
-        <div className="flex justify-around items-center w-full md:w-80 md:block ">
-          <div className="text-lg">{session?.user.name}</div>
-          <div className="flex gap-x-2 ">
-            {/* <img className="w-8 h-8 rounded-full" src={session?.user.image} /> */}
-            <div className="flex-col">
-              {/* <div>{session?.user.email}</div> */}
-              <button
-                className="text-zinc-100 font-semibold bg-red-600 p-1 rounded my-1 text-lg cursor-pointer"
-                onClick={handleSignOut}
-              >
-                Sign out
-              </button>
-            </div>
+          <div className="min-w-0">
+            <p className="font-display text-lg font-semibold leading-tight text-ink">
+              Cute Notes
+            </p>
+            <p className="truncate text-xs text-muted">Hi, {name}</p>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default Navbar;
+        {quote.text && (
+          <blockquote className="hidden max-w-md flex-1 text-center md:block">
+            <p className="font-display text-sm italic leading-snug text-ink/80">
+              &ldquo;{quote.text}&rdquo;
+            </p>
+            <cite className="mt-0.5 block text-[10px] font-medium not-italic uppercase tracking-wider text-muted">
+              {quote.author}
+            </cite>
+          </blockquote>
+        )}
+
+        <div className="flex shrink-0 items-center gap-2">
+          <div
+            className="hidden h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-sm font-semibold text-rose-700 sm:flex"
+            title={name}
+          >
+            {initial}
+          </div>
+          <button type="button" onClick={handleSignOut} className="btn-ghost py-2 text-xs">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}

@@ -1,379 +1,253 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
 import { motion } from "framer-motion";
+import Navbar from "./components/Navbar";
+import ComposerWithPets from "./components/ComposerWithPets";
+import MoodSelector from "./components/MoodSelector";
+import ThemeSelector from "./components/ThemeSelector";
+import DeleteModal from "./components/DeleteModal";
+import { noteSurface } from "@/app/lib/noteThemes";
+
+const emptyForm = {
+  title: "",
+  content: "",
+  mood: "🙂",
+  theme: "white",
+};
+
 export default function Home() {
   const [notes, setNotes] = useState(null);
-  const [data, setData] = useState({
-    title: "",
-    content: "",
-    mood: "🙂",
-    theme: "white",
-  });
+  const [data, setData] = useState(emptyForm);
   const [deleteBox, setDeleteBox] = useState(false);
   const [noteIdToDelete, setNoteIdToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [addNoteLoading, setAddNoteLoading] = useState(false);
+  const [notesError, setNotesError] = useState(null);
 
-  const onChange = async (e) => {
-    e.preventDefault();
-    if (e.target.name === "title") {
-      setData({ ...data, title: e.target.value });
-    }
-    if (e.target.name === "content") {
-      setData({ ...data, content: e.target.value });
-    }
-    if (e.target.name === "mood") {
-      setData({ ...data, mood: e.target.value });
-    }
-    if (e.target.name === "theme") {
-      setData({ ...data, theme: e.target.value });
-    }
-  };
   const getNotes = async () => {
-    const response = await fetch("/api/notes", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "same-origin",
-    });
-
-    const notes = await response.json();
-
-    setNotes(notes);
+    setNotesError(null);
+    try {
+      const response = await fetch("/api/notes", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setNotes({ notes: [] });
+        setNotesError(
+          [payload.message, payload.detail].filter(Boolean).join(" — ") ||
+            "Could not load notes"
+        );
+        return;
+      }
+      setNotes({ notes: Array.isArray(payload.notes) ? payload.notes : [] });
+    } catch {
+      setNotes({ notes: [] });
+      setNotesError("Could not reach the server. Check your connection.");
+    }
   };
+
+  useEffect(() => {
+    getNotes();
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!data.title.trim() || !data.content.trim()) return;
 
-    if (data.title == "" || data.content === "") {
-      return;
-    }
     setAddNoteLoading(true);
-    const res = await fetch("/api/notes", {
+    await fetch("/api/notes", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    let response = await res.json();
-    getNotes();
+    await getNotes();
     setAddNoteLoading(false);
-    setData({ ...data, title: "", content: "" });
+    setData({ ...emptyForm, theme: data.theme, mood: data.mood });
   };
+
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     const res = await fetch("/api/notes", {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
     });
     document.body.style.overflow = "auto";
-    let ress = await res.json();
-
-    if (ress.success) {
+    const result = await res.json();
+    if (result.success) {
       setDeleteBox(false);
       setDeleteLoading(false);
       getNotes();
     }
   };
-  const showPopUp = (id) => {
-    setNoteIdToDelete(id);
-    setDeleteBox(true);
-    document.body.style.overflow = "hidden";
-  };
-  const confirmDelete = () => {
-    handleDelete(noteIdToDelete);
-  };
-  useEffect(() => {
-    getNotes();
-  }, []);
+
   const formatDate = (isoString) => {
-    const options = {
+    return new Date(isoString).toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
-    };
-    const date = new Date(isoString);
-    return date.toLocaleDateString(undefined, options);
+      year: "numeric",
+    });
   };
 
+  const noteList = notes?.notes ?? [];
+  const hasNotes = noteList.length > 0;
+
   return (
-    <motion.div
-      initial={{ y: 10 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <>
       <Navbar />
-      {deleteBox && (
-        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.2 }}
-            exit={{ opacity: 0, scale: 0.7 }}
-            className="bg-white p-6 rounded-lg shadow-lg text-center"
-          >
-            <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
-            <p className="mb-4">Are you sure you want to delete this note?</p>
-            <div className="flex justify-center">
-              <button
-                className={`  text-white px-4 py-2 rounded mr-2 h-10 w-20 flex justify-center items-center bg-red-500`}
-                onClick={confirmDelete}
-              >
-                {!deleteLoading && "Delete"}
+      <DeleteModal
+        open={deleteBox}
+        loading={deleteLoading}
+        onConfirm={() => handleDelete(noteIdToDelete)}
+        onCancel={() => {
+          setDeleteBox(false);
+          document.body.style.overflow = "auto";
+        }}
+      />
 
-                {deleteLoading && (
-                  <img src="/loading.gif" className="w-auto  h-8 " />
-                )}
-              </button>
-              <button
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded h-10"
-                onClick={() => {
-                  setDeleteBox(false), (document.body.style.overflow = "auto");
-                }}
-              >
-                Cancel
-              </button>
+      <main className="mx-auto max-w-5xl px-4 pb-20 pt-8 md:px-6 md:pt-12">
+        <section className="mb-14">
+          <p className="section-label text-center">New entry</p>
+          <h1 className="mt-1 text-center font-display text-3xl font-semibold text-ink md:text-4xl">
+            What&apos;s on your mind?
+          </h1>
+
+          <div className="mt-10">
+            <ComposerWithPets surfaceClass={noteSurface(data.theme)}>
+            <form onSubmit={onSubmit}>
+              <input
+                className="input-field font-hand text-xl md:text-2xl font-medium"
+                type="text"
+                placeholder="Give it a title…"
+                name="title"
+                value={data.title}
+                onChange={(e) => setData({ ...data, title: e.target.value })}
+              />
+
+              <textarea
+                className="input-field mt-4 min-h-[220px] resize-none font-hand text-base leading-relaxed md:text-lg"
+                placeholder="Pour your heart out…"
+                name="content"
+                value={data.content}
+                onChange={(e) => setData({ ...data, content: e.target.value })}
+              />
+
+              <div className="mt-6 flex flex-col gap-5 border-t border-white/60 pt-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p className="section-label mb-2">Mood</p>
+                  <MoodSelector
+                    value={data.mood}
+                    onChange={(mood) => setData({ ...data, mood })}
+                  />
+                </div>
+                <div>
+                  <p className="section-label mb-2">Paper color</p>
+                  <ThemeSelector
+                    value={data.theme}
+                    onChange={(theme) => setData({ ...data, theme })}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={addNoteLoading}
+                  className="btn-primary w-full md:w-auto md:min-w-[11rem]"
+                >
+                  {addNoteLoading ? (
+                    <img src="/loading.gif" alt="" className="h-7 w-auto" />
+                  ) : (
+                    "Save note"
+                  )}
+                </button>
+              </div>
+            </form>
+            </ComposerWithPets>
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="section-label">Archive</p>
+              <h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
+                Your notes
+              </h2>
             </div>
-          </motion.div>
-        </div>
-      )}
-      <img
-        className="h-36  w-auto rotate-45 absolute top-40 right-10 -z-10"
-        src="./bunny.png"
-      />
-      <img
-        className="h-36  w-auto -rotate-45 absolute top-80 left-16 -z-10"
-        src="./chick.png"
-      />
-      <div
-        className={`md:w-[80vw] relative md:mx-auto mx-2 p-4 text-xl my-10   rounded-lg   shadow-lg shadow-zinc-300 z-20 ${
-          data.theme === "red"
-            ? "bg-red-400"
-            : data.theme === "blue"
-            ? "bg-blue-400"
-            : data.theme === "green"
-            ? "bg-green-400"
-            : data.theme === "pink"
-            ? "bg-pink-400"
-            : data.theme === "white"
-            ? "bg-zinc-100"
-            : data.theme === "yellow"
-            ? "bg-yellow-400"
-            : ""
-        }`}
-      >
-        <img
-          className="  h-36  w-auto hidden md:block  absolute -top-12 left-[45%]  -z-10"
-          src="./penguin.png"
-        />
-        <img
-          className="md:hidden h-36  w-auto -rotate-90  absolute top-[40%] -left-[12%] -z-10"
-          src="./penguin.png"
-        />
-        <img
-          className="  h-36  w-auto hidden md:block  absolute -top-16 left-[20%]  -z-10"
-          src="./puppy.png"
-        />
-        <img
-          className="md:hidden h-36  w-auto   absolute -top-[20%] left-[30%] -z-10"
-          src="./puppy.png"
-        />
-
-        <img
-          className="md:hidden h-20  w-auto   absolute -top-8  left-[10%] -z-10"
-          src="./bunny.png"
-        />
-        <img
-          className="md:hidden h-20  w-auto   absolute -top-4 left-[70%] -z-10"
-          src="./chick.png"
-        />
-        <div className="my-2 flex items-center ">
-          <input
-            className="w-[80%]  p-2 placeholder-zinc-500   text-lg md:text-xl  playpen-sans-v "
-            type="text"
-            placeholder="Your Title"
-            name="title"
-            value={data.title}
-            onChange={onChange}
-          />
-          <select
-            name="mood"
-            value={data.mood}
-            onChange={onChange}
-            className="text-3xl cursor-pointer  rounded-lg mx-3 h-full"
-          >
-            <option
-              value={"🙂"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              🙂
-            </option>
-            <option
-              value={"😄"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              😄
-            </option>
-            <option
-              value={"😔"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              😔
-            </option>
-            <option
-              value={"🥰"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              🥰
-            </option>
-            <option
-              value={"😂"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              😂
-            </option>
-            <option
-              value={"😭"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              😭
-            </option>
-            <option
-              value={"😠"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              😠
-            </option>
-            <option
-              value={"🤬"}
-              className="text-3xl cursor-pointer  rounded-lg"
-            >
-              🤬
-            </option>
-          </select>
-          <select
-            name="theme"
-            value={data.theme}
-            onChange={onChange}
-            className="text-xl cursor-pointer hover:bg-zinc-200   rounded mx-3 h-full bg-zinc-100"
-          >
-            <option
-              value={"white"}
-              className="text-xl cursor-pointer hover:bg-zinc-200  rounded-lg"
-            >
-              White
-            </option>
-            <option
-              value={"pink"}
-              className="text-xl cursor-pointer hover:bg-zinc-200 rounded-lg"
-            >
-              Pink
-            </option>
-            <option
-              value={"red"}
-              className="text-xl cursor-pointer hover:bg-zinc-200  rounded-lg"
-            >
-              Red
-            </option>
-            <option
-              value={"blue"}
-              className="text-xl cursor-pointer hover:bg-zinc-200  rounded-lg"
-            >
-              Blue
-            </option>
-            <option
-              value={"green"}
-              className="text-xl cursor-pointer hover:bg-zinc-200 rounded-lg"
-            >
-              Green
-            </option>
-            <option
-              value={"yellow"}
-              className="text-xl cursor-pointer hover:bg-zinc-200 rounded-lg"
-            >
-              Yellow
-            </option>
-          </select>
-        </div>
-        <div className="my-2 ">
-          <textarea
-            className="w-full  p-2 placeholder-zinc-500 h-[300px]   text-lg md:text-xl  playpen-sans-v "
-            placeholder="Today's Note"
-            name="content"
-            value={data.content}
-            onChange={onChange}
-          />
-        </div>
-        <div>
-          <button
-            className="bg-gray-900 rounded text-white      px-4 py-2   h-12 w-40 flex justify-center items-center'"
-            onClick={onSubmit}
-          >
-            {!addNoteLoading && "Post the Note"}
-
-            {addNoteLoading && (
-              <img src="/loading.gif" className="w-auto  h-8 " />
+            {hasNotes && (
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-muted shadow-sm">
+                {noteList.length} saved
+              </span>
             )}
-          </button>
-        </div>
-      </div>
-      <div className=" md:w-[80vw] md:m-auto mx-2   m-auto">
-        <div className="text-3xl md:text-4xl font-semibold">Your Notes</div>
-        {notes &&
-          notes.notes.map((note) => {
-            return (
-              <motion.div
-                initial={{ y: 10 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.2 }}
-                className={`    p-2 my-4  cursor-pointer   rounded-lg   shadow-lg shadow-zinc-300" ${
-                  note.theme === "red"
-                    ? "bg-red-400"
-                    : note.theme === "blue"
-                    ? "bg-blue-400"
-                    : note.theme === "green"
-                    ? "bg-green-400"
-                    : note.theme === "pink"
-                    ? "bg-pink-400"
-                    : note.theme === "white"
-                    ? "bg-white"
-                    : note.theme === "yellow"
-                    ? "bg-yellow-400"
-                    : ""
-                }`}
-                key={note.id}
-              >
-                <div className="flex justify-between">
-                  <div className="font-bold text-pink-700 bg-blue-50 text-lg rounded w-fit px-1">
-                    {formatDate(note.postedOn)}
-                  </div>
-                  <div>
-                    <img
-                      className="w-6 h-6"
-                      src="/delete.png"
-                      onClick={() => showPopUp(note._id)}
-                    />
-                  </div>
-                </div>
+          </div>
 
-                <div className="font-semibold  inline text-3xl break-words ">
-                  {note.title}
-                </div>
-                <div className="font-semibold text-2xl inline ml-2 ">
-                  {note.mood}
-                </div>
-                <div className="whitespace-pre-wrap text-lg break-words ">
-                  {note.content}
-                </div>
-              </motion.div>
-            );
-          })}
-      </div>
-    </motion.div>
+          {!notes && (
+            <div className="glass-panel animate-pulse p-12 text-center text-muted">
+              Loading your notes…
+            </div>
+          )}
+
+          {notesError && (
+            <p className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {notesError}
+            </p>
+          )}
+
+          {notes && !hasNotes && (
+            <div className="glass-panel flex flex-col items-center p-10 text-center md:p-12">
+              <img
+                src="/penguin.png"
+                alt=""
+                className="pet-peek h-24 w-auto md:h-28"
+              />
+              <p className="mt-4 font-display text-xl text-ink">No notes yet</p>
+              <p className="mt-2 max-w-sm text-sm text-muted">
+                Pip is keeping the page warm. Write your first note above!
+              </p>
+            </div>
+          )}
+
+          {hasNotes && (
+            <ul className="grid gap-4 md:grid-cols-2">
+              {noteList.map((note, index) => (
+                <motion.li
+                  key={note._id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className={`group relative border p-5 shadow-note transition hover:shadow-soft md:p-6 rounded-[1.25rem] ${noteSurface(note.theme)}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-rose-700">
+                      {formatDate(note.postedOn)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNoteIdToDelete(note._id);
+                        setDeleteBox(true);
+                        document.body.style.overflow = "hidden";
+                      }}
+                      className="rounded-xl p-2 text-muted opacity-60 transition hover:bg-white/80 hover:text-rose-600 hover:opacity-100"
+                      aria-label="Delete note"
+                    >
+                      <img src="/delete.png" alt="" className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <h3 className="mt-3 font-hand text-xl font-semibold text-ink md:text-2xl">
+                    {note.title}
+                    <span className="ml-2 inline-block">{note.mood}</span>
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-ink/85 md:text-base">
+                    {note.content}
+                  </p>
+                </motion.li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </main>
+    </>
   );
 }

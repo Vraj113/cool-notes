@@ -1,14 +1,25 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
+
+// Some networks (often Windows) refuse SRV lookups on system DNS; public resolvers fix Atlas +srv URIs.
+if (process.env.MONGODB_USE_PUBLIC_DNS !== "false") {
+  dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
+}
 
 const connectDb = async () => {
-  if (mongoose.connections[0].readyState) {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error("MONGODB_URI is not configured");
+  }
+
+  if (mongoose.connection.readyState === 1) {
     return;
   }
-  mongoose
-    .connect(
-      "mongodb+srv://admin:m57QwD7tl5KLLrcM@cluster0.3o51ig0.mongodb.net/Notes"
-    )
-    .then(() => console.log("Database connected!"))
-    .catch((err) => console.log(err));
+
+  await mongoose.connect(uri, {
+    serverSelectionTimeoutMS: 10000,
+    bufferCommands: false,
+  });
 };
+
 export default connectDb;
